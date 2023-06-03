@@ -1,0 +1,207 @@
+import { useState, useCallback } from "react";
+import { Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import img from "./gps.png";
+function SearchFilter({ handleClick }) {
+  return (
+    <div className="searchFilters">
+      <div onClick={handleClick} className="accomodations item">
+        Accomodations
+      </div>
+      <div onClick={handleClick} className="amusements item">
+        Amusements
+      </div>
+      <div onClick={handleClick} className="sport item">
+        Sport
+      </div>
+      <div className="interesting_places">
+        <h2
+          style={{
+            gridColumnStart: "1",
+            gridColumnEnd: "4",
+            justifySelf: "center",
+          }}
+        >
+          Interesting Places
+        </h2>
+        <div onClick={handleClick} className="architecture item">
+          Architecture
+        </div>
+        <div onClick={handleClick} className="cultural item">
+          Cultural
+        </div>
+        <div onClick={handleClick} className="historic item">
+          Historic
+        </div>
+        <div onClick={handleClick} className="natural item">
+          Natural
+        </div>
+        <div onClick={handleClick} className="religion item">
+          Religion
+        </div>
+        <div onClick={handleClick} className="other item">
+          Other
+        </div>
+      </div>
+      <div className="tourist_facility">
+        <h2
+          style={{
+            gridColumnStart: "1",
+            gridColumnEnd: "3",
+            justifySelf: "center",
+          }}
+        >
+          Tourist Facility
+        </h2>
+        <div onClick={handleClick} className="banks item">
+          Banks
+        </div>
+        <div onClick={handleClick} className="foods item">
+          Foods
+        </div>
+        <div onClick={handleClick} className="shops item">
+          Shops
+        </div>
+        <div onClick={handleClick} className="transport item">
+          Transport
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ControllerComp({ markers, map, setMarkers }) {
+  const [query, setQuery] = useState("");
+  const [country, setCountry] = useState("");
+  const [radius, setRadius] = useState(50);
+  const [kinds, setKinds] = useState([]);
+
+  const fetchLocation = useCallback(async () => {
+    const response = await fetch(
+      `https://restcountries.com/v2/name/${encodeURIComponent(
+        country
+      )}?fullText=true`
+    );
+    var Tmp = await response.json();
+    const res = await fetch(
+      `https://api.opentripmap.com/0.1/en/places/geoname?name=${encodeURIComponent(
+        query
+      )}&country=${
+        Tmp[0].alpha2Code
+      }&apikey=5ae2e3f221c38a28845f05b6f0821e799cbe45b28552bb46985c8372`
+    );
+    const result = await res.json();
+    map.current.panTo([result.lat, result.lon]);
+    map.current.setZoom("10");
+    const new_res =
+      kinds.length > 0
+        ? await fetch(
+            `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
+              query
+            )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
+              result.lat
+            }&kinds=${kinds.toLocaleString()}&apikey=5ae2e3f221c38a28845f05b6c573ff7f604db7d21512d36ce23d3c3f&limit=1000`
+          )
+        : await fetch(
+            `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
+              query
+            )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
+              result.lat
+            }&apikey=5ae2e3f221c38a28845f05b6c573ff7f604db7d21512d36ce23d3c3f&limit=1000`
+          );
+    const new_result = await new_res.json();
+
+    let tmp = [];
+    if (new_result && new_result.features && new_result.features.length > 0) {
+      new_result.features.forEach((val, idx) => {
+        if (idx == new_result.features.length - 1) {
+          map.current.panTo([
+            val.geometry.coordinates[1],
+            val.geometry.coordinates[0],
+          ]);
+          map.current.setZoom("10");
+        }
+        tmp.push(
+          <Marker
+            key={idx}
+            position={[
+              val.geometry.coordinates[1],
+              val.geometry.coordinates[0],
+            ]}
+            icon={L.icon({
+              iconUrl: img,
+              iconSize: [32, 32],
+            })}
+          >
+            <Popup key={idx}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: val.properties.highlighted_name,
+                }}
+              />
+            </Popup>
+          </Marker>
+        );
+      });
+      setMarkers(tmp);
+    } else {
+      setMarkers([]);
+    }
+  }, [query, country, kinds]);
+
+  return (
+    <div className="Controller">
+      <label>Enter Place Name</label>
+      <input
+        onChange={(e) => {
+          setQuery(e.target.value);
+        }}
+        value={query}
+      />
+      <label>Enter Country Name</label>
+      <input
+        onChange={(e) => {
+          setCountry(e.target.value);
+        }}
+        value={country}
+      />
+      <label>Enter the search radius</label>
+      <input
+        onChange={(e) => {
+          setRadius(e.target.value);
+        }}
+        value={radius}
+        title="Enter the radius in KMs"
+      />
+      <SearchFilter
+        handleClick={(e) => {
+          const val = e.target.innerHTML.toLocaleLowerCase();
+          if (kinds.includes(val)) {
+            setKinds([...kinds].filter((element) => element !== val));
+            e.target.setAttribute(
+              "style",
+              "background-color:antiquewhite; color:black"
+            );
+          } else {
+            setKinds([...kinds, val]);
+            e.target.setAttribute(
+              "style",
+              "background-color:black;color:white"
+            );
+          }
+        }}
+      />
+      <button
+        style={{
+          justifySelf: "center",
+          gridColumnStart: "-3",
+          gridColumnEnd: "-1",
+          width: "100px",
+        }}
+        onClick={fetchLocation}
+      >
+        Search
+      </button>
+    </div>
+  );
+}

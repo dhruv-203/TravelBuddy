@@ -5,7 +5,94 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
 }
+
+#root {
+  height: 100%;
+}
+
+.Controller {
+  position: relative;
+  left: 0;
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  grid-template-rows: auto;
+  gap: 20px;
+  justify-content: center;
+  align-items: stretch;
+  padding-top: 10px;
+  padding-left: 10px;
+  top: 0;
+  margin-bottom: 10px;
+}
+
+.searchFilters {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.item {
+  padding: 8px;
+  border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  -ms-border-radius: 50px;
+  -o-border-radius: 50px;
+  background-color: antiquewhite;
+  border: 2px solid black;
+  width: max-content;
+}
+
+.item:hover {
+  cursor: pointer;
+}
+
+.interesting_places {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 30px;
+  gap: 15px;
+  justify-items: center;
+}
+
+.tourist_facility {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 30px;
+  gap: 15px;
+}
+
+.tourist_facility>div {
+  position: relative;
+  left: 4.2vw;
+}
+
+.container {
+  /* position: absolute; */
+  height: 100vh;
+  display: grid;
+  width: 100vw;
+  gap: 20px;
+  grid-template-columns: 2fr 4fr;
+}
+
+.accomodations,
+.amusements,
+.sport {
+  justify-self: center;
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
