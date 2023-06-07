@@ -1,18 +1,21 @@
 import { useState, useCallback } from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import showToast from "./sleep";
 import img from "./gps.png";
 function SearchFilter({ handleClick }) {
   return (
     <div className="searchFilters">
-      <div onClick={handleClick} className="accomodations item">
-        Accomodations
-      </div>
-      <div onClick={handleClick} className="amusements item">
-        Amusements
-      </div>
-      <div onClick={handleClick} className="sport item">
-        Sport
+      <div className="top-tier">
+        <div onClick={handleClick} className="accomodations item">
+          Accomodations
+        </div>
+        <div onClick={handleClick} className="amusements item">
+          Amusements
+        </div>
+        <div onClick={handleClick} className="sport item">
+          Sport
+        </div>
       </div>
       <div className="interesting_places">
         <h2
@@ -83,6 +86,11 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       )}?fullText=true`
     );
     var Tmp = await response.json();
+    if (Object.keys(Tmp).includes("status")) {
+      showToast("Enter Valid Country Name", "medium");
+      setMarkers([]);
+      return null;
+    }
     const res = await fetch(
       `https://api.opentripmap.com/0.1/en/places/geoname?name=${encodeURIComponent(
         query
@@ -91,6 +99,11 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       }&apikey=5ae2e3f221c38a28845f05b6f0821e799cbe45b28552bb46985c8372`
     );
     const result = await res.json();
+    if (result["status"] === "NOT_FOUND") {
+      showToast(result.error, "medium");
+      setMarkers([]);
+      return null;
+    }
     map.current.panTo([result.lat, result.lon]);
     map.current.setZoom("10");
     const new_res =
@@ -110,11 +123,11 @@ export default function ControllerComp({ markers, map, setMarkers }) {
             }&apikey=5ae2e3f221c38a28845f05b6c573ff7f604db7d21512d36ce23d3c3f&limit=1000`
           );
     const new_result = await new_res.json();
-
     let tmp = [];
     if (new_result && new_result.features && new_result.features.length > 0) {
       new_result.features.forEach((val, idx) => {
-        if (idx == new_result.features.length - 1) {
+        if (idx === new_result.features.length - 1) {
+          // taken the co-ordinates of the last element
           map.current.panTo([
             val.geometry.coordinates[1],
             val.geometry.coordinates[0],
@@ -122,6 +135,7 @@ export default function ControllerComp({ markers, map, setMarkers }) {
           map.current.setZoom("10");
         }
         tmp.push(
+          // pushing marker for each obtained location
           <Marker
             key={idx}
             position={[
@@ -146,33 +160,40 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       setMarkers(tmp);
     } else {
       setMarkers([]);
+      showToast("No Results Found", "medium");
     }
-  }, [query, country, kinds]);
+  }, [query, country, kinds, radius]);
 
   return (
     <div className="Controller">
-      <label>Enter Place Name</label>
-      <input
-        onChange={(e) => {
-          setQuery(e.target.value);
-        }}
-        value={query}
-      />
-      <label>Enter Country Name</label>
-      <input
-        onChange={(e) => {
-          setCountry(e.target.value);
-        }}
-        value={country}
-      />
-      <label>Enter the search radius</label>
-      <input
-        onChange={(e) => {
-          setRadius(e.target.value);
-        }}
-        value={radius}
-        title="Enter the radius in KMs"
-      />
+      <div className="inputCont">
+        <label>Enter Place Name</label>
+        <input
+          onChange={(e) => {
+            setQuery(e.target.value);
+          }}
+          value={query}
+        />
+      </div>
+      <div className="inputCont">
+        <label>Enter Country Name</label>
+        <input
+          onChange={(e) => {
+            setCountry(e.target.value);
+          }}
+          value={country}
+        />
+      </div>
+      <div className="inputCont">
+        <label>Enter the search radius</label>
+        <input
+          onChange={(e) => {
+            setRadius(e.target.value);
+          }}
+          value={radius}
+          title="Enter the radius in KMs"
+        />
+      </div>
       <SearchFilter
         handleClick={(e) => {
           const val = e.target.innerHTML.toLocaleLowerCase();
@@ -194,11 +215,29 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       <button
         style={{
           justifySelf: "center",
-          gridColumnStart: "-3",
-          gridColumnEnd: "-1",
           width: "100px",
         }}
-        onClick={fetchLocation}
+        onClick={() => {
+          if (query !== "" && country !== "" && radius !== "") {
+            if (!isNaN(Number(radius))) {
+              fetchLocation();
+            } else {
+              showToast("Enter Valid Radius, Integer Value expected", "medium");
+              setMarkers([]);
+            }
+          } else {
+            if (query === "") {
+              showToast("Please Enter Place Name", "medium");
+              setMarkers([]);
+            } else if (country === "") {
+              showToast("Please Enter Country Name", "medium");
+              setMarkers([]);
+            } else if (radius === "") {
+              showToast("Please the Search Radius", "medium");
+              setMarkers([]);
+            }
+          }
+        }}
       >
         Search
       </button>
