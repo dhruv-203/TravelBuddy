@@ -3,7 +3,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import showToast from "./sleep";
 import img from "./gps.png";
-import { placeLocator, placesWithKinds, placesWithoutKinds } from "./config";
+import { apikey } from "./config";
 function SearchFilter({ handleClick }) {
   return (
     <div className="searchFilters">
@@ -92,7 +92,11 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       setMarkers([]);
       return null;
     }
-    const res = await fetch(placeLocator(query, Tmp[0].alpha2Code));
+    const res = await fetch(
+      `https://api.opentripmap.com/0.1/en/places/geoname?name=${encodeURIComponent(
+        query
+      )}&country=${Tmp[0].alpha2Code}&apikey=${apikey()}`
+    );
     const result = await res.json();
     if (result["status"] === "NOT_FOUND") {
       showToast(result.error, "medium");
@@ -101,11 +105,23 @@ export default function ControllerComp({ markers, map, setMarkers }) {
     }
     map.current.panTo([result.lat, result.lon]);
     map.current.setZoom("10");
+    //placesWithKinds(query, radius, result.lon, result.lat, kinds)
+    //placesWithoutKinds(query, radius, result.lon, result.lat)
     const new_res =
       kinds.length > 0
-        ? fetch(placesWithKinds(query, radius, result.lon, result.lat, kinds))
+        ? fetch(
+            `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
+              query
+            )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
+              result.lat
+            }&kinds=${kinds.toLocaleString()}&apikey=${apikey()}&limit=1000`
+          )
         : await fetch(
-            placesWithoutKinds(query, radius, result.lon, result.lat)
+            `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
+              query
+            )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
+              result.lat
+            }&apikey=${apikey()}&limit=1000`
           );
     const new_result = await new_res.json();
     let tmp = [];
