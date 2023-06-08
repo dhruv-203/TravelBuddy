@@ -1,3 +1,5 @@
+
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -15,18 +17,14 @@ body {
 .Controller {
   position: relative;
   left: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 0.5fr 0.5fr 0.5fr 3.5fr 0.3fr;
-  gap: 20px;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
   align-items: stretch;
-  padding-top: 10px;
   padding-left: 10px;
   top: 0;
-  margin-bottom: 10px;
   font-size: 1rem;
-
 }
 
 label {
@@ -116,7 +114,6 @@ input[type="text"]:focus {
 
 .searchFilters>div {
   width: 70%;
-  padding: 10px;
 }
 
 .container {

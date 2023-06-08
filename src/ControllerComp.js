@@ -3,6 +3,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import showToast from "./sleep";
 import img from "./gps.png";
+import { placeLocator, placesWithKinds, placesWithoutKinds } from "./config";
 function SearchFilter({ handleClick }) {
   return (
     <div className="searchFilters">
@@ -91,13 +92,7 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       setMarkers([]);
       return null;
     }
-    const res = await fetch(
-      `https://api.opentripmap.com/0.1/en/places/geoname?name=${encodeURIComponent(
-        query
-      )}&country=${
-        Tmp[0].alpha2Code
-      }&apikey=5ae2e3f221c38a28845f05b6f0821e799cbe45b28552bb46985c8372`
-    );
+    const res = await fetch(placeLocator(query, Tmp[0].alpha2Code));
     const result = await res.json();
     if (result["status"] === "NOT_FOUND") {
       showToast(result.error, "medium");
@@ -108,19 +103,9 @@ export default function ControllerComp({ markers, map, setMarkers }) {
     map.current.setZoom("10");
     const new_res =
       kinds.length > 0
-        ? await fetch(
-            `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
-              query
-            )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
-              result.lat
-            }&kinds=${kinds.toLocaleString()}&apikey=5ae2e3f221c38a28845f05b6c573ff7f604db7d21512d36ce23d3c3f&limit=1000`
-          )
+        ? fetch(placesWithKinds(query, radius, result.lon, result.lat, kinds))
         : await fetch(
-            `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
-              query
-            )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
-              result.lat
-            }&apikey=5ae2e3f221c38a28845f05b6c573ff7f604db7d21512d36ce23d3c3f&limit=1000`
+            placesWithoutKinds(query, radius, result.lon, result.lat)
           );
     const new_result = await new_res.json();
     let tmp = [];
@@ -215,6 +200,7 @@ export default function ControllerComp({ markers, map, setMarkers }) {
       <button
         style={{
           justifySelf: "center",
+          alignSelf: "center",
           width: "100px",
         }}
         onClick={() => {
