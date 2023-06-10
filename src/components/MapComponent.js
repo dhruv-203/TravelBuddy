@@ -1,13 +1,10 @@
-import {
-  MapContainer,
-  TileLayer,
-  Circle,
-} from "react-leaflet";
-import { useState, useEffect} from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { useState, useEffect } from "react";
+import L from "leaflet";
+import img from "../person.png";
 
 export default function MapComponent({ markers, map }) {
   const [position, setPosition] = useState([0, 0]);
-
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(function (cPosition) {
@@ -26,7 +23,13 @@ export default function MapComponent({ markers, map }) {
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="Map data &copy; OpenStreetMap contributors"
       />
-      <Circle center={position} pathOptions={{ color: "blue" }} radius={200} />
+      <Marker
+        position={position}
+        icon={L.icon({
+          iconUrl: img,
+          iconSize: [32, 32],
+        })}
+      ></Marker>
       {markers}
     </MapContainer>
   );

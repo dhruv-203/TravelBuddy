@@ -26,7 +26,16 @@ export default async function showToast(message, type) {
   msg.innerHTML = `${message}`;
   msg.style.position = "absolute";
   msg.style.transition = "all 0.7s ease-out";
-  msg.style.left = `${Number.parseInt((window.innerWidth * 40) / 100)}px`;
+  if (Number.parseInt(window.innerWidth) < 400) {
+    msg.style.left = `${Number.parseInt((window.innerWidth * 15) / 100)}px`;
+  } else if (
+    Number.parseInt(window.innerWidth) > 400 &&
+    Number.parseInt(window.innerWidth) < 600
+  ) {
+    msg.style.left = `${Number.parseInt((window.innerWidth * 25) / 100)}px`;
+  } else {
+    msg.style.left = `${Number.parseInt((window.innerWidth * 40) / 100)}px`;
+  }
   msg.style.top = `${Number.parseInt((window.innerHeight * 90) / 100)}px`;
   document.body.appendChild(msg);
   msg.style.display = "none";

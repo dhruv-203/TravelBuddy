@@ -1,0 +1,120 @@
+.Controller {
+    position: relative;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    align-items: stretch;
+    padding-left: 10px;
+    top: 0;
+    font-size: 1rem;
+    min-width: 300px;
+    gap: 5px;
+}
+
+label {
+    width: fit-content;
+}
+
+.inputCont {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+/* Styling the input field */
+input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    color: #333;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    -webkit-transition: box-shadow 0.3s ease;
+    -moz-transition: box-shadow 0.3s ease;
+    -ms-transition: box-shadow 0.3s ease;
+    -o-transition: box-shadow 0.3s ease;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+/* Styling on focus */
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.searchFilters {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5px;
+    align-items: center;
+    gap: 10px;
+}
+
+
+
+.item {
+    padding: 5px;
+    border-radius: 50px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    -ms-border-radius: 50px;
+    -o-border-radius: 50px;
+    background-color: antiquewhite;
+    border: 2px solid black;
+    width: max-content;
+}
+
+.item:hover {
+    cursor: pointer;
+}
+
+.interesting_places,
+.tourist_facility {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+    justify-items: center;
+}
+
+.intresting_items,
+.tourist_items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.top-tier {
+    display: flex;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+
+
+.searchFilters>div {
+    width: 70%;
+}
