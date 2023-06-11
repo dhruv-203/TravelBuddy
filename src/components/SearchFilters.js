@@ -1,6 +1,16 @@
-export default function SearchFilter({ handleClick }) {
+import "../styles/SearchFilters.css";
+export default function SearchFilter({
+  handleClick,
+  buffer,
+  kinds,
+  setKinds,
+  setBuffer,
+  windowController,
+  background,
+}) {
   return (
     <div className="searchFilters">
+      <h2>Search Filters</h2>
       <div className="top-tier">
         <div onClick={handleClick} className="accomodations item">
           Accomodations
@@ -50,6 +60,37 @@ export default function SearchFilter({ handleClick }) {
           <div onClick={handleClick} className="transport item">
             Transport
           </div>
+        </div>
+      </div>
+      <div className="filtersButtonContainer">
+        <div
+          className="apply"
+          onClick={() => {
+            setBuffer({ ...buffer, kinds: kinds });
+          }}
+        >
+          Apply
+        </div>
+        <div
+          className="cancel"
+          id="cancel"
+          onClick={() => {
+            setBuffer({ ...buffer, kinds: [] });
+            setKinds([]);
+            Array.from(
+              windowController.current.querySelectorAll(".item")
+            ).forEach((val) => {
+              val.setAttribute(
+                "style",
+                "background-color:antiquewhite; color:black"
+              );
+            });
+            windowController.current.style.display = "none";
+            background.current.style.filter = "none";
+            background.current.style.webkitFilter = "none";
+          }}
+        >
+          Cancel
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useRef, useEffect } from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import showToast from "./sleep";
@@ -8,13 +8,35 @@ import close from "../close.png";
 import "../styles/Navbar.css";
 import searchIcon from "../search.png";
 
-export default function Navbar({ markers, map, setMarkers }) {
+export function OptionWindow({ children, windowController, background }) {
+  return (
+    <div className="optionWindow" ref={windowController}>
+      <img
+        className="closeButton"
+        onClick={() => {
+          windowController.current.style.display = "none";
+          background.current.style.filter = "none";
+          background.current.style.webkitFilter = "none";
+        }}
+        src={close}
+        alt="close"
+      />
+      {children}
+    </div>
+  );
+}
+
+export default function Navbar({
+  markers,
+  map,
+  setMarkers,
+  background,
+  windowController,
+  buffer,
+  setBuffer,
+}) {
   const [Children, setChildren] = useState(false);
-  const [buffer, setBuffer] = useState({
-    country: "",
-    query: "",
-    radius: "",
-  });
+
   const OptionContainer = useMemo(() => {
     function DefaultOptions() {
       return (
@@ -26,18 +48,45 @@ export default function Navbar({ markers, map, setMarkers }) {
           >
             Search
           </span>
-          <span>Filters</span>
+          <span
+            onClick={(e) => {
+              // console.log();
+              windowController.current.style.display = "block";
+              background.current.style.filter = "blur(5px)";
+              background.current.style.webkitFilter = "blur(5px)";
+            }}
+          >
+            Filters
+          </span>
           <span>About</span>
         </div>
       );
     }
     function SearchOptions() {
-      const [kinds, setKinds] = useState([]);
-
       const [query, setQuery] = useState(buffer.query);
       const [country, setCountry] = useState(buffer.country);
       const [radius, setRadius] = useState(buffer.radius);
+
       const fetchLocation = useCallback(async () => {
+        // Validation
+        if (query === "") {
+          showToast("Please Enter Place Name", "medium");
+          setMarkers([]);
+          return;
+        } else if (country === "") {
+          showToast("Please Enter Country Name", "medium");
+          setMarkers([]);
+          return;
+        } else if (radius === "") {
+          showToast("Please the Search Radius", "medium");
+          setMarkers([]);
+          return;
+        } else if (isNaN(Number(radius))) {
+          showToast("Enter Valid Radius, Integer Value expected", "medium");
+          setMarkers([]);
+          return;
+        }
+
         const response = await fetch(
           `https://restcountries.com/v2/name/${encodeURIComponent(
             country
@@ -63,13 +112,13 @@ export default function Navbar({ markers, map, setMarkers }) {
         map.current.panTo([result.lat, result.lon]);
         map.current.setZoom("10");
         const new_res =
-          kinds.length > 0
+          buffer.kinds.length > 0
             ? fetch(
                 `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
                   query
                 )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
                   result.lat
-                }&kinds=${kinds.toLocaleString()}&apikey=${apikey()}&limit=1000`
+                }&kinds=${buffer.kinds.toLocaleString()}&apikey=${apikey()}&limit=1000`
               )
             : await fetch(
                 `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
@@ -122,7 +171,7 @@ export default function Navbar({ markers, map, setMarkers }) {
           setMarkers([]);
           showToast("No Results Found", "medium");
         }
-      }, [query, country, kinds, radius]);
+      }, [query, country, buffer.kinds, radius]);
       return (
         <div className="SearchOption">
           <div className="inputCont">
@@ -158,37 +207,16 @@ export default function Navbar({ markers, map, setMarkers }) {
               justifySelf: "center",
               alignSelf: "center",
             }}
-            onClick={() => {
-              if (query !== "" && country !== "" && radius !== "") {
-                if (!isNaN(Number(radius))) {
-                  fetchLocation(
-                    country,
-                    query,
-                    radius,
-                    kinds,
-                    map,
-                    markers,
-                    setMarkers
-                  );
-                } else {
-                  showToast(
-                    "Enter Valid Radius, Integer Value expected",
-                    "medium"
-                  );
-                  setMarkers([]);
-                }
-              } else {
-                if (query === "") {
-                  showToast("Please Enter Place Name", "medium");
-                  setMarkers([]);
-                } else if (country === "") {
-                  showToast("Please Enter Country Name", "medium");
-                  setMarkers([]);
-                } else if (radius === "") {
-                  showToast("Please the Search Radius", "medium");
-                  setMarkers([]);
-                }
-              }
+            onClick={(e) => {
+              fetchLocation(
+                country,
+                query,
+                radius,
+                buffer.kinds,
+                map,
+                markers,
+                setMarkers
+              );
             }}
           >
             <img srcSet={searchIcon} alt="search" />

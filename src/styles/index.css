@@ -22,9 +22,54 @@ body {
 
 }
 
+.optionWindow {
+  display: none;
+  z-index: 55000;
+  filter: none;
+  position: absolute;
+  width: 60%;
+  height: 80%;
+  top: 10%;
+  left: 20%;
+  background-color: antiquewhite;
+  -webkit-filter: none;
+}
 
+.closeButton {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  /* aspect-ratio: 1/1; */
+  left: 95%;
+  top: 2%;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+@media(max-width:600px) and (min-width:550px) {
+  .closeButton {
+    left: 92%
+  }
+}
+
+@media (max-width:550px) and (min-width:350px) {
+  .closeButton {
+    left: 90%;
+  }
+}
+
+@media (max-width:350px) {
+  .closeButton {
+    left: 88%;
+  }
+}
+
+@media(max-width:800px) and (min-width:600px) {
+  .closeButton {
+    left: 94%
+  }
 }
