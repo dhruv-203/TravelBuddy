@@ -1,4 +1,5 @@
 import "../styles/SearchFilters.css";
+import { fetchLocation } from "./Navbar";
 export default function SearchFilter({
   handleClick,
   buffer,
@@ -7,6 +8,12 @@ export default function SearchFilter({
   setBuffer,
   windowController,
   background,
+  country,
+  query,
+  radius,
+  map,
+  markers,
+  setMarkers,
 }) {
   return (
     <div className="searchFilters">
@@ -67,6 +74,18 @@ export default function SearchFilter({
           className="apply"
           onClick={() => {
             setBuffer({ ...buffer, kinds: kinds });
+            fetchLocation(
+              country,
+              query,
+              radius,
+              kinds,
+              map,
+              markers,
+              setMarkers
+            );
+            windowController.current.style.display = "none";
+            background.current.style.filter = "none";
+            background.current.style.webkitFilter = "none";
           }}
         >
           Apply

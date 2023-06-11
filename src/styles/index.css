@@ -29,10 +29,13 @@ body {
   position: absolute;
   width: 60%;
   height: 80%;
+  max-width: 500px;
+  min-width: 300px;
   top: 10%;
-  left: 20%;
+  left: 33%;
   background-color: antiquewhite;
   -webkit-filter: none;
+  min-width: 280px;
 }
 
 .closeButton {
@@ -40,7 +43,7 @@ body {
   width: 20px;
   height: 20px;
   /* aspect-ratio: 1/1; */
-  left: 95%;
+  left: 94%;
   top: 2%;
 }
 
@@ -50,26 +53,78 @@ code {
 }
 
 
-@media(max-width:600px) and (min-width:550px) {
-  .closeButton {
-    left: 92%
+@media (max-width:2600px) and (min-width:1500px) {
+  .navHead {
+    font-size: 3rem !important;
+  }
+
+  .NavChildren {
+    font-size: 2rem !important;
+  }
+
+  .optionWindow {
+    font-size: 1.5rem;
+    max-width: 600px;
+    left: 40%;
+    top: 15%;
+    height: 70%;
+  }
+
+  .title {
+    font-size: 2rem !important;
+  }
+
+  .interesting_places,
+  .tourist_facility {
+    gap: 25px !important;
   }
 }
 
-@media (max-width:550px) and (min-width:350px) {
+@media (max-width:1500px) {
   .closeButton {
-    left: 90%;
+    left: 94%;
   }
 }
 
-@media (max-width:350px) {
+@media (max-width:1100px) {
   .closeButton {
-    left: 88%;
+    left: 94%;
+  }
+
+  .optionWindow {
+    left: 28%
   }
 }
 
-@media(max-width:800px) and (min-width:600px) {
+
+@media(max-width:800px) {
   .closeButton {
-    left: 94%
+    left: 93%
+  }
+
+  .optionWindow {
+    left: 21%
+  }
+}
+
+@media (max-width:450px) {
+  .closeButton {
+    left: 90%
+  }
+
+  .optionWindow {
+    left: 17%
+  }
+}
+
+@media (max-width:380px) {
+  .optionWindow {
+    left: 14%
+  }
+}
+
+@media (max-width:330px) {
+  .optionWindow {
+    left: 7%
   }
 }

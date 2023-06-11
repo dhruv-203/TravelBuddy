@@ -9,9 +9,11 @@ import SearchFilter from "./components/SearchFilters";
 function App() {
   const [markers, setMarkers] = useState([]);
   const map = useRef();
-
+  const [query, setQuery] = useState("");
+  const [country, setCountry] = useState("");
+  const [radius, setRadius] = useState("");
   const windowController = useRef();
-  
+
   const background = useRef();
   const [buffer, setBuffer] = useState({
     country: "",
@@ -20,7 +22,7 @@ function App() {
     kinds: [],
   });
   const [kinds, setKinds] = useState([]);
-  
+
   return (
     <>
       <div className="container" ref={background}>
@@ -32,6 +34,14 @@ function App() {
           windowController={windowController}
           buffer={buffer}
           setBuffer={setBuffer}
+          query={query}
+          setQuery={setQuery}
+          country={country}
+          setCountry={setCountry}
+          radius={radius}
+          setRadius={setRadius}
+          kinds={kinds}
+          setKinds={setKinds}
         />
         <MapComponent markers={markers} map={map} />
       </div>
@@ -60,6 +70,12 @@ function App() {
             setBuffer={setBuffer}
             windowController={windowController}
             background={background}
+            country={country}
+            query={query}
+            radius={radius}
+            map={map}
+            markers={markers}
+            setMarkers={setMarkers}
           />
         }
         windowController={windowController}
