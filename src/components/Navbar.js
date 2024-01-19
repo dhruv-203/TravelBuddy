@@ -67,7 +67,7 @@ export async function fetchLocation(
   const res = await fetch(
     `https://api.opentripmap.com/0.1/en/places/geoname?name=${encodeURIComponent(
       query
-    )}&country=${Tmp[0].alpha2Code}&apikey=${process.env.REACT_APP_API_KEY}`
+    )}&country=${Tmp[0].alpha2Code}&apikey=${process.env.REACT_APP_VERCEL_API_KEY}`
   );
   const result = await res.json();
   if (result["status"] === "NOT_FOUND") {
@@ -83,13 +83,13 @@ export async function fetchLocation(
         `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
           query
         )}&radius=${radius * 1000}&lon=${result.lon}&lat=${result.lat
-        }&kinds=${kinds.toLocaleString()}&apikey=${process.env.REACT_APP_API_KEY}&limit=1000`
+        }&kinds=${kinds.toLocaleString()}&apikey=${process.env.REACT_APP_VERCEL_API_KEY}&limit=1000`
       )
       : await fetch(
         `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
           query
         )}&radius=${radius * 1000}&lon=${result.lon}&lat=${result.lat
-        }&apikey=${process.env.REACT_APP_API_KEY}&limit=1000`
+        }&apikey=${process.env.REACT_APP_VERCEL_API_KEY}&limit=1000`
       );
   const new_result = await new_res.json();
   let tmp = [];
