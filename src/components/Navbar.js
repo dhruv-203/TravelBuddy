@@ -1,9 +1,8 @@
-import { useCallback, useMemo, useState, useRef, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import showToast from "./sleep";
 import img from "../gps.png";
-import { apikey } from "../config";
 import close from "../close.png";
 import "../styles/Navbar.css";
 import searchIcon from "../search.png";
@@ -68,7 +67,7 @@ export async function fetchLocation(
   const res = await fetch(
     `https://api.opentripmap.com/0.1/en/places/geoname?name=${encodeURIComponent(
       query
-    )}&country=${Tmp[0].alpha2Code}&apikey=${apikey()}`
+    )}&country=${Tmp[0].alpha2Code}&apikey=${process.env.REACT_APP_API_KEY}`
   );
   const result = await res.json();
   if (result["status"] === "NOT_FOUND") {
@@ -81,19 +80,17 @@ export async function fetchLocation(
   const new_res =
     kinds.length > 0
       ? await fetch(
-          `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
-            query
-          )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
-            result.lat
-          }&kinds=${kinds.toLocaleString()}&apikey=${apikey()}&limit=1000`
-        )
+        `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
+          query
+        )}&radius=${radius * 1000}&lon=${result.lon}&lat=${result.lat
+        }&kinds=${kinds.toLocaleString()}&apikey=${process.env.REACT_APP_API_KEY}&limit=1000`
+      )
       : await fetch(
-          `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
-            query
-          )}&radius=${radius * 1000}&lon=${result.lon}&lat=${
-            result.lat
-          }&apikey=${apikey()}&limit=1000`
-        );
+        `https://api.opentripmap.com/0.1/en/places/autosuggest?name=${encodeURIComponent(
+          query
+        )}&radius=${radius * 1000}&lon=${result.lon}&lat=${result.lat
+        }&apikey=${process.env.REACT_APP_API_KEY}&limit=1000`
+      );
   const new_result = await new_res.json();
   let tmp = [];
   if (new_result && new_result.features && new_result.features.length > 0) {

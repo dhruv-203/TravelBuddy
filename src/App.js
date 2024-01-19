@@ -13,7 +13,7 @@ function App() {
   const [country, setCountry] = useState("");
   const [radius, setRadius] = useState("");
   const windowController = useRef();
-
+  console.log(process.env);
   const background = useRef();
   const [buffer, setBuffer] = useState({
     country: "",
